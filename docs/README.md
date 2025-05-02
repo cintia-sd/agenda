@@ -21,7 +21,7 @@
 
 ┣ 📂 db ┃ ┗ 📜 connection.js 
 
-┣ 📂 images ┃ ┗ 📜 [capturas] 
+┣ 📂 images ┃ ┗ 📜 [formulario.png] [listado.png]
 
 ┣ 📂 docs ┃ ┗ 📜 README.md (este archivo) 
 
