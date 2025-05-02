@@ -1,23 +1,24 @@
 # 📇 Agenda Virtual · Proyecto Fullstack
+![Status](https://img.shields.io/badge/status-en%20desarrollo-yellow)
 
 Gestor de contactos web desarrollado con Node.js, Express y MySQL.
 
 ---
 
-## 🚀 ¿Qué es *Agenda Virtual*?
+## ¿Qué es *Agenda Virtual*?
 
 **Agenda Virtual** es una aplicación web fullstack que permite gestionar una lista de contactos personales de forma sencilla, intuitiva y eficiente.
 
 Este proyecto nace como ejercicio de aprendizaje dentro de las prácticas del ciclo formativo de Desarrollo de Aplicaciones Web, con el objetivo de aplicar conocimientos de backend, frontend y bases de datos relacionales en un entorno real.
 
-### 🎯 Objetivos:
+### Objetivos:
 - Desarrollar una aplicación funcional CRUD.
 - Estructurar código de forma limpia, mantenible y escalable.
 - Ofrecer una experiencia de usuario accesible y fluida.
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - **Backend:** Node.js, Express  
 - **Base de datos:** MySQL  
@@ -26,7 +27,7 @@ Este proyecto nace como ejercicio de aprendizaje dentro de las prácticas del ci
 
 ---
 
-## ✨ Características principales
+## Características principales
 
 - Interfaz amigable y limpia.
 - Operaciones CRUD completas (crear, leer, actualizar, eliminar).
@@ -38,7 +39,7 @@ Este proyecto nace como ejercicio de aprendizaje dentro de las prácticas del ci
 
 ---
 
-## 🖼️ Imágenes
+## Imágenes
 
 | Listado de contactos | Formulario de alta |
 |----------------------|---------------------|
@@ -46,7 +47,7 @@ Este proyecto nace como ejercicio de aprendizaje dentro de las prácticas del ci
 
 ---
 
-## 📘 Retos enfrentados y aprendizajes
+## Retos enfrentados y aprendizajes
 
 Este proyecto ha supuesto un aprendizaje completo del desarrollo fullstack. Algunos de los principales retos han sido:
 
@@ -60,7 +61,7 @@ Cada obstáculo ha sido una oportunidad para adquirir conocimientos prácticos v
 
 ---
 
-## 🔮 Mejoras futuras y visión de evolución
+## Mejoras futuras y visión de evolución
 
 Próximos pasos para seguir creciendo con este proyecto:
 
@@ -74,7 +75,7 @@ Próximos pasos para seguir creciendo con este proyecto:
 
 ---
 
-## 💻 Instalación local
+## Instalación local
 
 1. Clona este repositorio: https://github.com/cintia-sd/agenda.git
 
@@ -91,14 +92,14 @@ e importa el archivo `agenda.sql`.
 
 ---
 
-## 📈 Estado del proyecto
+## Estado del proyecto
 
 Actualmente en desarrollo activo.  
 En proceso de implementación de mejoras visuales, accesibilidad y funcionalidades avanzadas.
 
 ---
 
-## 👩🏻‍💻 Autor
+## Autor
 
 **Cintia Sánchez Díaz**  
 Desarrolladora web en formación | Creativa, resolutiva y en constante evolución.  
@@ -108,7 +109,7 @@ Desarrolladora web en formación | Creativa, resolutiva y en constante evolució
 
 ---
 
-## 📬 Contacto profesional
+## Contacto profesional
 
 ¿Te interesa este proyecto o quieres colaborar conmigo?
 
@@ -116,7 +117,7 @@ No dudes en escribirme para propuestas laborales, sugerencias o cualquier consul
 
 ---
 
-## 🪪 Licencia
+## Licencia
 
 Este proyecto está bajo la licencia MIT.  
 Puedes usarlo, adaptarlo o mejorarlo libremente citando al autor.
