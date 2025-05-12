@@ -11,74 +11,76 @@
   <h1>Agenda Virtual</h1>
   <p>¿Con quién nos ponemos en contacto?</p>
 
-  <input type="text" id="filtroInput" placeholder="🔍 Filtrar por nombre, apellidos o teléfono">
-  <div id="loadingSpinner" style="display:none">Cargando...</div>
-
-  <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
-    <button id="nuevoContactoBtn">Añadir Contacto</button>
+<!-- Contenedor de los botones Añadir Contacto y el Filtro -->
+  <div style="display: flex; justify-content: flex-start; align-items: center; gap: 321px; margin-bottom: 10px; margin-left: 210px">
+    <button id="nuevoContactoBtn" style="margin: 0px; align-self: flex-start;">Añadir Contacto</button>
+    <input type="text" id="filtroInput" placeholder="🔍 Filtrar por nombre, apellidos o teléfono" style="margin: 0;">
   </div>
   
-<!-- Ventana emergente de detalles del contacto -->
-<div id="contactDetailsModal" class="modal hidden">
-  <div class="modal-content">
-    <span id="closeModal" class="close">&times;</span>
 
-    <div class="avatar-section" style="display: flex; gap: 2rem; align-items: flex-start;">
-      
-      <!-- Columna izquierda: imagen + botones -->
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <img id="avatar-img"
-          src="uploads/*"
-          onerror="this.onerror=null; this.src='uploads/default-avatar.png';"
-          alt="Avatar"
-          style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;" />
-
-        
-        <input type="file" id="uploadAvatar" accept="image/*" style="display: none;" />
-
-        <div style="margin-top: 1rem;">
-          <button id="editImageBtn">Cambiar</button>
-          <button id="deleteImageBtn">Eliminar</button>
+  <div id="loadingSpinner" style="display:none; text-align: center;">Cargando...</div>
+  
+  <!-- MODAL -->
+  <div id="contactDetailsModal" class="modal hidden">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <div class="avatar-section" style="display: flex; gap: 2rem; align-items: flex-start;">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <img id="avatar-img"
+            src="uploads/*"
+            onerror="this.onerror=null; this.src='uploads/default-avatar.png';"
+            alt="Avatar"
+            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;" />
+          <input type="file" id="uploadAvatar" accept="image/*" style="display: none;" />
+          <div style="margin-top: 1rem;">
+            <button id="editImageBtn">Cambiar</button>
+            <button id="deleteImageBtn">Eliminar</button>
+          </div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+          <h2 id="contactName" style="margin-bottom: 20px; text-align: center;"></h2>
+          <div>
+            <p><strong>Dirección:</strong> <span id="contactAddress"></span></p>
+            <p><strong>Teléfono:</strong> <span id="contactPhone"></span></p>
+            <p><strong>Tipo:</strong> <span id="contactType"></span></p>
+          </div>
         </div>
       </div>
-
-      <!-- Columna derecha: nombre centrado + detalles -->
-      <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-        <h2 id="contactName" style="margin-bottom: 1rem; text-align: center;"></h2>
-        <div>
-          <p><strong>Dirección:</strong> <span id="contactAddress"></span></p>
-          <p><strong>Teléfono:</strong> <span id="contactPhone"></span></p>
-          <p><strong>Tipo:</strong> <span id="contactType"></span></p>
-        </div>
-      </div>
-
     </div>
   </div>
-</div>
 
-  <table id="contactos">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Apellidos</th>
-        <th>Teléfono</th>
-        <th>Tipo</th>
-        <th class="acciones-header">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="contact-row">
-        <td>Juan</td>
-        <td>Pérez</td>
-        <td>600123456</td>
-        <td>Personal</td>
-        <td class="acciones">
-          <button class="btn-editar" title="Editar contacto">❌</button>
-          <button class="btn-eliminar" title="Eliminar contacto">✏️</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div id="tabla-container" style="min-height: 300px;">   <!-- min-heigh para altura fija -->
+    <table id="contactos">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Teléfono</th>
+          <th>Tipo</th>
+          <th class="acciones-header">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="contact-row">
+          <td>Juan</td>
+          <td>Pérez</td>
+          <td>600123456</td>
+          <td>Personal</td>
+          <td class="acciones">
+            <button class="btn-editar" title="Editar contacto">❌</button>
+            <button class="btn-eliminar" title="Eliminar contacto">✏️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación colocada fuera del contenedor de la tabla para mantener posición fija -->
+  <div id="paginacion" style="display: flex; justify-content: flex-start; gap: 6px; margin-top: 20px; margin-bottom: 20px; margin-left: 210px;">
+    <button class="btn-pagina">1</button>
+    <button class="btn-pagina">2</button>
+    <button class="btn-pagina">3</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
