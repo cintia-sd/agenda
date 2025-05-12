@@ -4,168 +4,57 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Agenda Virtual</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-
-    h1, h2, p {
-      text-align: center;
-      color: #447c67;
-    }
-
-    #nuevoContactoBtn {
-      display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
-      background-color: #bfe9db;
-      color: black;
-      border: #447c67;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    #nuevoContactoBtn:hover, #verContactosBtn:hover {
-      background-color: #74b89f;
-      color: white;
-    }
-
-    #filtroInput {
-      display: block;
-      margin: 10px auto 20px;
-      padding: 10px;
-      width: 60%;
-      max-width: 400px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    table {
-      width: 70%;
-      margin: 0 auto;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 8px;
-      text-align: left;
-      border: 2px solid #ddd;
-    }
-
-    th {
-      background-color: #bfe9db;
-    }
-
-    tr:hover {
-      background-color: #f5f5f5;
-    }
-
-    th.acciones-header {
-      visibility: hidden;
-      padding: 0;
-      border: none;
-      width: 1%;
-    }
-
-    .contact-row .acciones {
-      visibility: hidden;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      border: none !important;
-      padding: 0 4px;
-      width: 1%;
-      white-space: nowrap;
-    }
-
-    .contact-row:hover .acciones {
-      visibility: visible;
-    }
-
-    .contact-row .acciones button {
-      margin: 0;
-      padding: 2px 4px;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      font-size: 1.2em;
-      text-align: left;
-    }
-
-    .btn-eliminar { color: red; }
-    .btn-eliminar:hover { color: #d33; }
-    .btn-editar { color: #555; }
-
-    .swal-nombre {
-      color: #447c67;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-
-    .swal-info {
-      color: black;
-      font-size: 1em;
-    }
-    /* Personalización general del modal SweetAlert2 */
-    .swal2-popup {
-      border-radius: 20px !important;
-      padding: 1.8em !important;
-      font-family: 'Arial', sans-serif !important;
-      background-color: #fefefe !important;
-      border: 2px solid #bfe9db !important;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) !important;
-    }
-
-    /* Botón principal (confirmar) */
-    .swal2-confirm {
-      background-color: #447c67 !important;
-      color: white !important;
-      border-radius: 8px !important;
-      padding: 8px 20px !important;
-      font-weight: bold !important;
-    }
-
-    /* Botón cancelar */
-    .swal2-cancel {
-      background-color: #eeeeee !important;
-      color: #333 !important;
-      border-radius: 8px !important;
-      padding: 8px 20px !important;
-    }
-
-    /* Inputs del formulario dentro del popup */
-    .swal2-input {
-      border: 1px solid #ccc !important;
-      border-radius: 6px !important;
-      padding: 10px !important;
-      font-size: 1em !important;
-    }
-
-    /* Estilo para los textos del contacto */
-    .swal-nombre {
-      color: #447c67;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-
-    .swal-info {
-      color: black;
-      font-size: 1em;
-    }
-
-  </style>
 </head>
 <body>
   <h1>Agenda Virtual</h1>
   <p>¿Con quién nos ponemos en contacto?</p>
 
   <input type="text" id="filtroInput" placeholder="🔍 Filtrar por nombre, apellidos o teléfono">
+  <div id="loadingSpinner" style="display:none">Cargando...</div>
 
   <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
     <button id="nuevoContactoBtn">Añadir Contacto</button>
-    <button id="eliminarFiltroBtn" style="display: none;">↩️Eliminar filtro</button>
   </div>
+  
+<!-- Ventana emergente de detalles del contacto -->
+<div id="contactDetailsModal" class="modal hidden">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+
+    <div class="avatar-section" style="display: flex; gap: 2rem; align-items: flex-start;">
+      
+      <!-- Columna izquierda: imagen + botones -->
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <img id="avatar-img"
+          src="uploads/*"
+          onerror="this.onerror=null; this.src='uploads/default-avatar.png';"
+          alt="Avatar"
+          style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;" />
+
+        
+        <input type="file" id="uploadAvatar" accept="image/*" style="display: none;" />
+
+        <div style="margin-top: 1rem;">
+          <button id="editImageBtn">Cambiar</button>
+          <button id="deleteImageBtn">Eliminar</button>
+        </div>
+      </div>
+
+      <!-- Columna derecha: nombre centrado + detalles -->
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+        <h2 id="contactName" style="margin-bottom: 1rem; text-align: center;"></h2>
+        <div>
+          <p><strong>Dirección:</strong> <span id="contactAddress"></span></p>
+          <p><strong>Teléfono:</strong> <span id="contactPhone"></span></p>
+          <p><strong>Tipo:</strong> <span id="contactType"></span></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
   <table id="contactos">
     <thead>
@@ -188,186 +77,9 @@
           <button class="btn-eliminar" title="Eliminar contacto">✏️</button>
         </td>
       </tr>
-      <!-- Para poner más filas dinámicas, aquí -->
     </tbody>
   </table>
 
-  <script>
-    function cargarContactos(filtro = '') {
-      fetch('/api/contactos')
-        .then(response => response.json())
-        .then(contactos => {
-          const tabla = document.querySelector('#contactos tbody');
-          tabla.innerHTML = '';
-
-          contactos
-            .filter(c =>
-              c.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-              c.apellidos.toLowerCase().includes(filtro.toLowerCase()) ||
-              c.telefono.toLowerCase().includes(filtro.toLowerCase())
-            )
-            .forEach(contacto => {
-              const fila = document.createElement('tr');
-              fila.classList.add('contact-row');
-              fila.dataset.id = contacto.id;
-              fila.dataset.direccion = contacto.direccion || '';
-
-              fila.innerHTML = `
-                <td>${contacto.nombre}</td>
-                <td>${contacto.apellidos}</td>
-                <td>${contacto.telefono}</td>
-                <td>${contacto.tipo == 1 ? 'Personal' : 'Empresa'}</td>
-                <td class="acciones">
-                  <button class="btn-eliminar" title="Eliminar contacto">❌</button>
-                  <button class="btn-editar" title="Editar contacto">✏️</button>
-                </td>
-              `;
-
-              tabla.appendChild(fila);
-
-              fila.addEventListener('click', () => {
-                const id = fila.dataset.id;
-                const contacto = contactos.find(c => c.id == id);
-                if (contacto) {
-                  Swal.fire({
-                    title: `<span class="swal-nombre">${contacto.nombre} ${contacto.apellidos}</span>`,
-                    html: `
-                      <p class="swal-info"><strong>Teléfono:</strong> ${contacto.telefono}</p>
-                      <p class="swal-info"><strong>Dirección:</strong> ${contacto.direccion}</p>
-                      <p class="swal-info"><strong>Tipo:</strong> ${contacto.tipo == 1 ? 'Personal' : 'Empresa'}</p>
-                    `,
-                    confirmButtonText: 'Cerrar'
-                  });
-
-                }
-              });
-            });
-        });
-    }
-
-    window.addEventListener('DOMContentLoaded', () => cargarContactos());
-
-    document.addEventListener('click', async event => {
-      const eliminarBtn = event.target.closest('.btn-eliminar');
-      const editarBtn = event.target.closest('.btn-editar');
-
-      if (eliminarBtn) {
-        const row = eliminarBtn.closest('.contact-row');
-        const contactId = row.dataset.id;
-
-        const result = await Swal.fire({
-          title: '¿Seguro que desea eliminar este contacto?',
-          text: 'La acción se ejecutará de manera permanente',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Sí, eliminar',
-          cancelButtonText: 'Cancelar',
-          confirmButtonColor: '#d33',
-          cancelButtonColor: '#3085d6',
-        });
-
-        if (result.isConfirmed) {
-          await fetch(`/api/contactos/${contactId}`, { method: 'DELETE' });
-          row.remove();
-          Swal.fire('¡Eliminado!', 'El contacto ha sido eliminado.', 'success');
-        }
-      }
-
-      if (editarBtn) {
-        const row = editarBtn.closest('.contact-row');
-        const contactId = row.dataset.id;
-        const nombre = row.children[0].textContent;
-        const apellidos = row.children[1].textContent;
-        const telefono = row.children[2].textContent;
-        const direccion = row.dataset.direccion || '';
-        const tipo = row.children[3].textContent;
-
-        const { value: formValues } = await Swal.fire({
-          title: 'Editar contacto',
-          html: `
-            <input id="swal-nombre" class="swal2-input" placeholder="Nombre" value="${nombre}">
-            <input id="swal-apellidos" class="swal2-input" placeholder="Apellidos" value="${apellidos}">
-            <input id="swal-telefono" class="swal2-input" placeholder="Teléfono" value="${telefono}">
-            <input id="swal-direccion" class="swal2-input" placeholder="Dirección" value="${direccion}">
-            <select id="swal-tipo" class="swal2-input">
-              <option value="1" ${tipo === 'Personal' ? 'selected' : ''}>Personal</option>
-              <option value="2" ${tipo === 'Empresa' ? 'selected' : ''}>Empresa</option>
-            </select>
-          `,
-          focusConfirm: false,
-          showCancelButton: true,
-          confirmButtonText: 'Guardar',
-          cancelButtonText: 'Cancelar',
-          preConfirm: () => ({
-            nombre: document.getElementById('swal-nombre').value,
-            apellidos: document.getElementById('swal-apellidos').value,
-            telefono: document.getElementById('swal-telefono').value,
-            direccion: document.getElementById('swal-direccion').value,
-            tipo: document.getElementById('swal-tipo').value
-          })
-        });
-
-        if (formValues) {
-          const confirmEdit = await Swal.fire({
-            title: '¿Desea realizar los cambios?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sí',
-            cancelButtonText: 'No'
-          });
-
-          if (confirmEdit.isConfirmed) {
-            await fetch(`/editar-contacto/${contactId}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(formValues)
-            });
-            Swal.fire('¡Cambios guardados!', '', 'success');
-            cargarContactos();
-          }
-        }
-      }
-    });
-
-    document.getElementById('filtroInput').addEventListener('input', e => {
-      cargarContactos(e.target.value);
-    });
-
-    document.getElementById('nuevoContactoBtn').addEventListener('click', () => {
-      Swal.fire({
-        title: 'Añadir contacto',
-        html: `
-          <input type="text" id="nombre" class="swal2-input" placeholder="Nombre">
-          <input type="text" id="apellidos" class="swal2-input" placeholder="Apellidos">
-          <input type="text" id="direccion" class="swal2-input" placeholder="Dirección">
-          <input type="text" id="telefono" class="swal2-input" placeholder="Teléfono">
-          <select id="tipo" class="swal2-input">
-            <option value="1">Personal</option>
-            <option value="2">Empresa</option>
-          </select>
-        `,
-        confirmButtonText: 'Guardar',
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => ({
-          nombre: document.getElementById('nombre').value,
-          apellidos: document.getElementById('apellidos').value,
-          direccion: document.getElementById('direccion').value,
-          telefono: document.getElementById('telefono').value,
-          tipo: document.getElementById('tipo').value
-        })
-      }).then(async result => {
-        if (result.value) {
-          await fetch('/api/contactos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(result.value)
-          });
-          Swal.fire('¡Contacto guardado!', '', 'success');
-          cargarContactos();
-        }
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

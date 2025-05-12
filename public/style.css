@@ -1,0 +1,278 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1, h2, p {
+  text-align: center;
+  color: #447c67;
+}
+
+#nuevoContactoBtn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #bfe9db;
+  color: black;
+  border: #447c67;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#nuevoContactoBtn:hover,
+#verContactosBtn:hover {
+  background-color: #74b89f;
+  color: white;
+}
+
+#filtroInput {
+  display: block;
+  margin: 10px auto 20px;
+  padding: 10px;
+  width: 60%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+table {
+  width: 70%;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border: 2px solid #ddd;
+}
+
+th {
+  background-color: #bfe9db;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+th.acciones-header {
+  visibility: hidden;
+  padding: 0;
+  border: none;
+  width: 1%;
+}
+
+.contact-row .acciones {
+  visibility: hidden;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: none !important;
+  padding: 0 4px;
+  width: 1%;
+  white-space: nowrap;
+}
+
+.contact-row:hover .acciones {
+  visibility: visible;
+}
+
+.contact-row .acciones button {
+  margin: 0;
+  padding: 2px 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.2em;
+  text-align: left;
+}
+
+.btn-eliminar { color: red; }
+.btn-eliminar:hover { color: #d33; }
+.btn-editar { color: #555; }
+
+.swal2-popup {
+  border-radius: 20px !important;
+  padding: 1.8em !important;
+  font-family: 'Arial', sans-serif !important;
+  background-color: #fefefe !important;
+  border: 2px solid #bfe9db !important;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.swal2-confirm {
+  background-color: #447c67 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  font-weight: bold !important;
+}
+
+.swal2-cancel {
+  background-color: #eeeeee !important;
+  color: #333 !important;
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+}
+
+.swal2-input {
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  padding: 10px !important;
+  font-size: 1em !important;
+}
+
+.swal-nombre {
+  color: #447c67;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.swal-info {
+  color: black;
+  font-size: 1em;
+}
+
+.swal2-container {
+  z-index: 9999 !important;
+}
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.avatar-section {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.5rem;
+}
+
+#avatar-img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+  transition: transform 0.3s ease-in-out;
+}
+
+#avatar-img:hover {
+  transform: scale(1.10);
+}
+
+.contact-row .acciones button {
+  font-size: 1.1em;
+  padding: 8px 14px;
+  border-radius: 10px;
+  margin: 0 6px;
+}
+
+.btn-editar {
+  background-color: #dcefe8;
+  padding: 10px 20px;
+  font-size: 1.1em;
+}
+
+.btn-editar:hover {
+  background-color: #447c67;
+  color: white;
+}
+
+.btn-eliminar {
+  background-color: #ffe5e5;
+  color: #b50000;
+  padding: 10px 20px;
+  font-size: 1.1em;
+}
+
+.btn-eliminar:hover {
+  background-color: #ffb3b3;
+  color: white;
+}
+
+.modal-content input,
+.modal-content select {
+  font-size: 1.1em;
+  padding: 12px;
+}
+
+#guardarBtn {
+  background-color: #447c67;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 25px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#guardarBtn:hover {
+  background-color: #74b89f;
+}
+
+/* Cambios específicos */
+input[type="file"] {
+  font-size: 0.9em; /* Tamaño de fuente más pequeño */
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  display: block;
+  margin: 10px auto;
+}
+
+.select-personal-empresa {
+  background-color: #bfe9db; /* Verde clarito */
+  font-size: 0.9em; /* Fuente más pequeña */
+  padding: 8px 12px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.contact-row .acciones button {
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 10px;
+}
+
+.contact-row .acciones button:not(:last-child) {
+  margin-right: 0;
+}

@@ -7,6 +7,23 @@ const mysql = require('mysql');
 
 const app = express();
 const port = 3000;
+const multer = require('multer');
+const path = require('path');
+
+// Configurar destino y nombre de archivo
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, 'public', 'uploads'));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+
+
 
 // ─────────────────────────────────────────────────────────────
 // Configuración de la base de datos (MAMP)
@@ -38,23 +55,32 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+
 
 // ─────────────────────────────────────────────────────────────
 // Agregar un nuevo contacto
 // ─────────────────────────────────────────────────────────────
-app.post('/api/contactos', (req, res) => {
+app.post('/api/contactos', upload.single('avatar'), (req, res) => {
   const { nombre, apellidos, direccion, telefono, tipo } = req.body;
-  console.log('📦 Datos recibidos:', req.body);
+  const avatar = req.file ? `/uploads/${req.file.filename}` : null;
 
-  if (!nombre || !apellidos || !direccion || !telefono || !tipo) {
+  console.log('📦 Datos recibidos:', req.body);
+  console.log('🖼️ Archivo recibido:', req.file);
+  
+
+  if (!nombre || !apellidos || !direccion || !telefono || !tipo || !avatar) {
     return res.status(400).json({ error: '❗ Todos los campos son obligatorios' });
   }
 
   const sql = `
-    INSERT INTO contactos (nombre, apellidos, direccion, telefono, tipo)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO contactos (nombre, apellidos, direccion, telefono, tipo, avatar)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
-  const values = [nombre, apellidos, direccion, telefono, tipo];
+  const values = [nombre, apellidos, direccion, telefono, tipo, avatar];
 
   db.query(sql, values, (err, result) => {
     if (err) {
@@ -69,10 +95,13 @@ app.post('/api/contactos', (req, res) => {
       apellidos,
       direccion,
       telefono,
-      tipo
+      tipo,
+      avatar
     });
+    
   });
 });
+
 
 // ─────────────────────────────────────────────────────────────
 // Obtener todos los contactos
@@ -157,4 +186,59 @@ app.delete('/api/contactos/:id', (req, res) => {
 // ─────────────────────────────────────────────────────────────
 app.listen(port, () => {
   console.log(`🚀 Servidor escuchando en http://localhost:${port}`);
+});
+
+// ─────────────────────────────────────────────────────────────
+// Iniciar la ventana modal de detalles de contacto
+// ─────────────────────────────────────────────────────────────
+
+app.get('/api/contacto/:id', (req, res) => {
+  const id = req.params.id;
+  db.query('SELECT * FROM contactos WHERE id = ?', [id], (err, results) => {
+    if (err) return res.status(500).send(err);
+    if (results.length === 0) return res.status(404).send('Contacto no encontrado');
+    res.json(results[0]);
+  });
+});
+
+
+// ─────────────────────────────────────────────────────────────
+// Subir imagen de contacto
+// ─────────────────────────────────────────────────────────────
+app.post('/api/subir-imagen/:id', upload.single('avatar'), (req, res) => {
+  const contactId = req.params.id;
+
+  if (!req.file) {
+    return res.status(400).json({ error: '❗ No se ha subido ninguna imagen' });
+  }
+
+  const imagePath = `/uploads/${req.file.filename}`;
+
+
+  db.query('UPDATE contactos SET avatar = ? WHERE id = ?', [imagePath, contactId], (err) => {
+    if (err) {
+      console.error('❌ Error al actualizar imagen:', err);
+      return res.status(500).json({ error: 'Error al guardar la imagen' });
+    }
+
+    res.json({ mensaje: 'Imagen subida correctamente', rutaImagen: imagePath });
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Eliminar imagen del modal
+// ─────────────────────────────────────────────────────────────
+
+app.post('/api/eliminar-imagen/:id', (req, res) => {
+  const contactId = req.params.id;
+  const defaultAvatar = '/uploads/default-avatar.png';
+
+  db.query('UPDATE contactos SET avatar = ? WHERE id = ?', [defaultAvatar, contactId], (err) => {
+    if (err) {
+      console.error('❌ Error al eliminar imagen:', err);
+      return res.status(500).json({ error: 'Error al eliminar la imagen' });
+    }
+
+    res.json({ mensaje: 'Imagen eliminada correctamente', rutaImagen: defaultAvatar });
+  });
 });
