@@ -249,21 +249,19 @@ th.acciones-header {
   background-color: #74b89f;
 }
 
-/* Cambios específicos */
 input[type="file"] {
-  font-size: 0.9em; /* Tamaño de fuente más pequeño */
+  font-size: 0.7em;
   padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border: none;
   display: block;
-  margin: 10px auto;
+  margin: 8px auto;
 }
 
 .select-personal-empresa {
-  background-color: #bfe9db; /* Verde clarito */
-  font-size: 0.9em; /* Fuente más pequeña */
+  background-color: #bfe9db;
+  font-size: 0.9em;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 14px;
   width: 100%;
 }
 

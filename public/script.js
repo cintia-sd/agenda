@@ -116,6 +116,15 @@ document.addEventListener('click', async event => {
     if (editarBtn) await editarContacto(editarBtn);
 });
 
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      const modal = document.getElementById('contactDetailsModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+      }
+    }
+  });
+  
 document.getElementById('filtroInput').addEventListener('input', e => {
     cargarContactos(e.target.value);
 });
@@ -139,7 +148,14 @@ document.getElementById('uploadAvatar').addEventListener('change', async functio
 document.getElementById('deleteImageBtn').addEventListener('click', async () => {
     await eliminarImagen();
 });
-
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    const modal = document.getElementById('contactDetailsModal');
+    if (modal && !modal.classList.contains('hidden')) {
+      modal.classList.add('hidden');
+    }
+  }
+});
 // Funciones de acciones
 async function eliminarContacto(eliminarBtn) {
     const row = eliminarBtn.closest('.contact-row');
