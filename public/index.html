@@ -20,14 +20,14 @@
 
   <div id="loadingSpinner" style="display:none; text-align: center;">Cargando...</div>
   
-  <!-- MODAL -->
+  <!-- Modal -->
   <div id="contactDetailsModal" class="modal hidden">
     <div class="modal-content">
       <span id="closeModal" class="close">&times;</span>
       <div class="avatar-section" style="display: flex; gap: 2rem; align-items: flex-start;">
         <div style="display: flex; flex-direction: column; align-items: center;">
           <img id="avatar-img"
-            src="uploads/*"
+            src="uploads/default-avatar.png"
             onerror="this.onerror=null; this.src='uploads/default-avatar.png';"
             alt="Avatar"
             style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;" />
@@ -75,11 +75,16 @@
     </table>
   </div>
 
-  <!-- Paginación colocada fuera del contenedor de la tabla para mantener posición fija -->
+  <!-- Paginación colocada fuera del contenedor de la tabla -->
   <div id="paginacion" style="display: flex; justify-content: flex-start; gap: 6px; margin-top: 20px; margin-bottom: 20px; margin-left: 210px;">
     <button class="btn-pagina">1</button>
     <button class="btn-pagina">2</button>
     <button class="btn-pagina">3</button>
+    <button class="btn-pagina">4</button>
+    <button class="btn-pagina">5</button>
+  </div>
+  <div style="display: flex; justify-content: flex-end; margin: 10px 325px 10px 0;">
+    <button id="exportExcelBtn">Exportar contactos</button>
   </div>
 
   <script src="script.js"></script>

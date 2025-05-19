@@ -4,17 +4,96 @@ let paginaActual = 1;
 const contactosPorPagina = 10;
 let originalData = {};
 let imagenSeleccionada = null;
+let ultimoFiltro = '';
+let contactosAntesFiltro = [];
 
-// Funciones principales
+// ───────────────────────────────────────────────────────────── 
+// FUNCIONES PRINCIPALES
+// ───────────────────────────────────────────────────────────── 
+
+//Filtrado de contactos
+
+// Escucha del input para buscar contactos
+filtroInput.addEventListener('input', () => {
+    const filtro = filtroInput.value.trim();
+    
+    // Si estamos quitando un filtro (el campo se vacía)
+    if (filtro === '' && ultimoFiltro.length >= 3) {
+        // Restaurar el estado anterior
+        contactosTotales = [...contactosAntesFiltro];
+        paginaActual = 1;
+        mostrarPagina(paginaActual);
+        crearPaginacion(contactosTotales.length);
+        ultimoFiltro = '';
+        return;
+    }
+    
+    // Aplicar nuevo filtro si tiene al menos 3 caracteres
+    if (filtro.length >= 3) {
+        // Guardar el estado actual si es un nuevo filtro
+        if (ultimoFiltro === '' || ultimoFiltro.length < 3) {
+            contactosAntesFiltro = [...contactosTotales];
+        }
+        ultimoFiltro = filtro;
+        paginaActual = 1;
+        cargarContactos(filtro, paginaActual);
+    }
+});
+
 function cargarContactos(filtro = '', pagina = 1) {
-    fetch('/api/contactos')
-        .then(response => response.json())
-        .then(contactos => {
-            contactosTotales = filtrarContactos(contactos, filtro);
-            contactosTotales.sort(ordenarPorApellido);
-            mostrarPagina(pagina);
+    const usarFiltro = filtro.length >= 3;
+
+    if (usarFiltro) {
+        // Con filtro, busca en toda la base de datos
+        fetch(`/buscar?termino=${encodeURIComponent(filtro)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    contactosTotales = data;
+                    contactosTotales.sort(ordenarPorApellido);
+                    paginaActual = pagina;
+                    mostrarPagina(paginaActual);
+                    crearPaginacion(contactosTotales.length);
+                } else {
+                    console.error("La respuesta no es un array:", data);
+                }
+            })
+            .catch(error => console.error("Error al cargar contactos:", error));
+    } else {
+        // Sin filtro, hacemos la paginación desde el backend
+        let limit, offset;
+        if (pagina === 1) {
+            limit = 100;
+            offset = 0;
+        } else {
+            limit = 50;
+            offset = 100 + (pagina - 2) * 50;
+        }
+
+        // Si ya tenemos esos contactos, no hacemos fetch
+        if (contactosTotales.length < offset + 1) {
+            fetch(`/api/contactos?offset=${offset}&limit=${limit}`)
+                .then(res => res.json())
+                .then(nuevos => {
+                    if (pagina === 1) {
+                        contactosTotales = nuevos;
+                    } else {
+                        // Evitar duplicados al añadir nuevos contactos
+                        const idsExistentes = new Set(contactosTotales.map(c => c.id));
+                        const contactosNoDuplicados = nuevos.filter(c => !idsExistentes.has(c.id));
+                        contactosTotales = contactosTotales.concat(contactosNoDuplicados);
+                    }
+                    contactosTotales.sort(ordenarPorApellido);
+                    paginaActual = pagina;
+                    mostrarPagina(paginaActual);
+                    crearPaginacion(contactosTotales.length);
+                });
+        } else {
+            paginaActual = pagina;
+            mostrarPagina(paginaActual);
             crearPaginacion(contactosTotales.length);
-        });
+        }
+    }
 }
 
 function mostrarPagina(pagina) {
@@ -36,15 +115,53 @@ function mostrarPagina(pagina) {
 function crearPaginacion(totalContactos) {
     const paginacionDiv = document.getElementById('paginacion');
     paginacionDiv.innerHTML = '';
-    const totalPaginas = Math.ceil(totalContactos / contactosPorPagina);
 
-    for (let i = 1; i <= totalPaginas; i++) {
-        const btn = crearBotonPaginacion(i);
-        paginacionDiv.appendChild(btn);
+    const totalPaginas = Math.ceil(totalContactos / contactosPorPagina);
+    const rango = 2; // nº de páginas a mostrar antes y después de la actual
+
+    function creaBtn(texto, page, deshabilitado = false) {
+        const btn = document.createElement('button');
+        btn.textContent = texto;
+        btn.classList.add('btn-pagina');
+        if (deshabilitado) btn.classList.add('disabled');
+        if (page === paginaActual) btn.classList.add('activa');
+        if (!deshabilitado) {
+            btn.addEventListener('click', () => {
+                cargarContactos(ultimoFiltro, page);
+            });
+        }
+        return btn;
     }
+
+    paginacionDiv.appendChild(creaBtn('Inicio', 1, paginaActual === 1));
+    paginacionDiv.appendChild(creaBtn('«', paginaActual - 1, paginaActual === 1));
+
+    const start = Math.max(1, paginaActual - rango);
+    const end = Math.min(totalPaginas, paginaActual + rango);
+
+    if (start > 1) {
+        paginacionDiv.appendChild(creaBtn('1', 1));
+        if (start > 2) paginacionDiv.appendChild(document.createTextNode('…'));
+    }
+
+    for (let p = start; p <= end; p++) {
+        paginacionDiv.appendChild(creaBtn(p, p));
+    }
+
+    if (end < totalPaginas) {
+        if (end < totalPaginas - 1) paginacionDiv.appendChild(document.createTextNode('…'));
+        paginacionDiv.appendChild(creaBtn(totalPaginas, totalPaginas));
+    }
+
+    paginacionDiv.appendChild(creaBtn('»', paginaActual + 1, paginaActual === totalPaginas));
+    paginacionDiv.appendChild(creaBtn('Final', totalPaginas, paginaActual === totalPaginas));
 }
 
-// Funciones auxiliares
+
+// ───────────────────────────────────────────────────────────── 
+// FUNCIONES AUXILIARES
+// ───────────────────────────────────────────────────────────── 
+
 function filtrarContactos(contactos, filtro) {
     const filtroNormalizado = filtro.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
@@ -52,9 +169,11 @@ function filtrarContactos(contactos, filtro) {
         // Normalizamos los campos de contacto y los comparamos con el filtro
         c.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(filtroNormalizado.toLowerCase()) ||
         c.apellidos.normalize("NFD").replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(filtroNormalizado.toLowerCase()) ||
-        c.telefono.toLowerCase().includes(filtroNormalizado.toLowerCase())
+        c.telefono.includes(filtroNormalizado.toLowerCase())
     );
-    }
+}
+
+// Ordenar contactos por apellidos
 function ordenarPorApellido(a, b) {
     return a.apellidos.toLowerCase().localeCompare(b.apellidos.toLowerCase());
 }
@@ -105,7 +224,32 @@ function obtenerRutaImagen(nombreArchivo) {
     return nombreArchivo.startsWith('/') ? nombreArchivo : `/uploads/${nombreArchivo}`;
 }
 
-// Manejo de eventos
+// Función para exportar contactos a Excel
+document.getElementById('exportExcelBtn').addEventListener('click', function() {
+    fetch('/api/contactos/export')
+      .then(response => {
+        if (!response.ok) throw new Error('Error al generar el Excel');
+        return response.blob();
+      })
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'contactos.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      })
+      .catch(err => {
+        console.error(err);
+        Swal.fire('Error', 'No se pudo descargar el Excel.', 'error');
+      });
+  });
+  
+// ───────────────────────────────────────────────────────────── 
+// MANEJO DE EVENTOS
+// ───────────────────────────────────────────────────────────── 
 document.addEventListener('DOMContentLoaded', () => cargarContactos());
 
 document.addEventListener('click', async event => {
@@ -124,10 +268,6 @@ document.addEventListener('keydown', function(event) {
       }
     }
   });
-  
-document.getElementById('filtroInput').addEventListener('input', e => {
-    cargarContactos(e.target.value);
-});
 
 document.getElementById('nuevoContactoBtn').addEventListener('click', () => {
     añadirNuevoContacto();
@@ -148,6 +288,7 @@ document.getElementById('uploadAvatar').addEventListener('change', async functio
 document.getElementById('deleteImageBtn').addEventListener('click', async () => {
     await eliminarImagen();
 });
+
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Escape') {
     const modal = document.getElementById('contactDetailsModal');
@@ -156,7 +297,10 @@ document.addEventListener('keydown', function(event) {
     }
   }
 });
-// Funciones de acciones
+
+// ───────────────────────────────────────────────────────────── 
+// FUNCIONES DE ACCIONES
+// ───────────────────────────────────────────────────────────── 
 async function eliminarContacto(eliminarBtn) {
     const row = eliminarBtn.closest('.contact-row');
     const contactId = row.dataset.id;
@@ -175,6 +319,8 @@ async function eliminarContacto(eliminarBtn) {
     if (result.isConfirmed) {
         await fetch(`/api/contactos/${contactId}`, { method: 'DELETE' });
         row.remove();
+        // Actualizar la lista de contactos después de eliminar
+        cargarContactos(ultimoFiltro, paginaActual);
         Swal.fire('¡Eliminado!', 'El contacto ha sido eliminado.', 'success');
     }
 }
@@ -230,7 +376,8 @@ async function editarContacto(editarBtn) {
             });
 
             Swal.fire('¡Cambios guardados!', '', 'success');
-            cargarContactos();
+            // Actualizar los contactos tras editar
+            cargarContactos(ultimoFiltro, paginaActual);
         }
     }
 }
@@ -243,12 +390,12 @@ function añadirNuevoContacto() {
             <input type="text" id="apellidos" class="swal2-input" placeholder="Apellidos">
             <input type="text" id="direccion" class="swal2-input" placeholder="Dirección">
             <input type="text" id="telefono" class="swal2-input" placeholder="Teléfono">
-            <input type="file" id="imagen" class="swal2-file" accept="image/*">
-            <img id="previewImagen" src="" alt="Vista previa" style="margin-top:10px; max-width:100%; max-height:150px; display:none;">
             <select id="tipo" class="swal2-input">
                 <option value="1">Personal</option>
                 <option value="2">Empresa</option>
             </select>
+            <input type="file" id="imagen" class="swal2-file" accept="image/*">
+            <img id="previewImagen" src="" alt="Vista previa" style="margin-top:10px; max-width:100%; max-height:150px; display:none;">
         `,
         showCancelButton: true,
         confirmButtonText: 'Guardar',
@@ -304,7 +451,9 @@ function añadirNuevoContacto() {
             })
             .then(data => {
                 Swal.fire('Éxito', data.mensaje || 'Contacto guardado correctamente.', 'success');
-                cargarContactos();
+                // Reinicia el estado del filtro y recarga desde el principio
+                ultimoFiltro = '';
+                cargarContactos('', 1);
                 return data;
             })
             .catch(err => {

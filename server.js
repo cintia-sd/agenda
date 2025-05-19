@@ -4,11 +4,12 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql');
+const multer = require('multer');
+const path = require('path');
+const XLSX = require('xlsx');
 
 const app = express();
 const port = 3000;
-const multer = require('multer');
-const path = require('path');
 
 // Configurar destino y nombre de archivo
 const storage = multer.diskStorage({
@@ -56,7 +57,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
-app.use(express.static(path.join(__dirname, 'public')));
+
+
+
 
 
 
@@ -72,8 +75,10 @@ app.post('/api/contactos', upload.single('avatar'), (req, res) => {
   console.log('🖼️ Archivo recibido:', req.file);
   
 
-  if (!nombre || !apellidos || !direccion || !telefono || !tipo || !avatar) {
-    return res.status(400).json({ error: '❗ Todos los campos son obligatorios' });
+  if (!nombre || !apellidos || !direccion || !telefono || !tipo) {
+    return res
+      .status(400)
+      .json({ error: '❗ Todos los campos son obligatorios' });
   }
 
   const sql = `
@@ -121,6 +126,32 @@ app.get('/api/contactos', (req, res) => {
     res.status(200).json(results);
   });
 });
+
+// ─────────────────────────────────────────────────────────────
+// Filtrar contactos
+// ─────────────────────────────────────────────────────────────
+app.get('/buscar', (req, res) => {
+  const termino = req.query.termino;
+
+  if (termino.length < 3) {
+    return res.json([]);
+  }
+
+  const consulta = `SELECT * FROM contactos 
+WHERE nombre LIKE ? OR telefono LIKE ? OR apellidos LIKE ?
+ORDER BY apellidos ASC`;
+  const valor = `%${termino}%`;
+
+  db.query(consulta, [valor, valor, valor], (err, resultados) => {
+    if (err) {
+      console.error('Error en la búsqueda:', err);  // <-- imprime TODO el error
+      return res.status(500).json({ error: 'Error en el servidor', detalle: err.sqlMessage || err.message || err });
+    }
+    console.log('Resultados:', resultados);
+    res.json(resultados);
+  });
+});
+
 
 // ─────────────────────────────────────────────────────────────
 // Editar contacto
@@ -182,13 +213,6 @@ app.delete('/api/contactos/:id', (req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// Iniciar el servidor
-// ─────────────────────────────────────────────────────────────
-app.listen(port, () => {
-  console.log(`🚀 Servidor escuchando en http://localhost:${port}`);
-});
-
-// ─────────────────────────────────────────────────────────────
 // Iniciar la ventana modal de detalles de contacto
 // ─────────────────────────────────────────────────────────────
 
@@ -241,4 +265,50 @@ app.post('/api/eliminar-imagen/:id', (req, res) => {
 
     res.json({ mensaje: 'Imagen eliminada correctamente', rutaImagen: defaultAvatar });
   });
+});
+
+
+// ─────────────────────────────────────────────────────────────
+// Exportar contactos a Excel
+// ─────────────────────────────────────────────────────────────
+
+app.get('/api/contactos/export', (req, res) => {
+  // 1. Consulta los contactos de la base de datos
+  db.query('SELECT nombre, apellidos, direccion, telefono, tipo FROM contactos', (err, results) => {
+    if (err) {
+      console.error('Error al obtener contactos para export:', err);
+      return res.status(500).json({ error: 'Error interno al exportar' });
+    }
+
+    // 2. Crea una hoja de cálculo a partir del array de objetos
+    const worksheet = XLSX.utils.json_to_sheet(results.map(c => ({
+      Nombre: c.nombre,
+      Apellidos: c.apellidos,
+      Dirección: c.direccion,
+      Teléfono: c.telefono,
+      Tipo: c.tipo == 1 ? 'Personal' : 'Empresa'
+    })));
+
+    // 3. Crea un libro y añade la hoja
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Contactos');
+
+    // 4. Genera un buffer con el contenido XLSX
+    const buffer = XLSX.write(workbook, { 
+      bookType: 'xlsx', 
+      type: 'buffer' 
+    });
+
+    // 5. Envía el fichero con cabeceras adecuadas
+    res.setHeader('Content-Disposition', 'attachment; filename="contactos.xlsx"');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buffer);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// Iniciar el servidor
+// ─────────────────────────────────────────────────────────────
+app.listen(port, () => {
+  console.log(`🚀 Servidor escuchando en http://localhost:${port}`);
 });
