@@ -1,71 +1,60 @@
-/* ========== ESTILOS ========== */
-body {
-  font-family: Arial, sans-serif;
+/* ========== TEMA OSCURO para SweetAlert2 ========== */
+html.dark .swal2-popup {
+  background-color: #1f2937 !important; /* gris oscuro */
+  color: #f9fafb !important;
+}
+html.dark .swal2-input,
+html.dark .swal2-select {
+  background-color: #374151 !important;
+  color: #f9fafb !important;
+  border: 1px solid #6b7280;
 }
 
-h1, h2, p {
-  text-align: center;
-  color: #447c67;
+/* ========== SWEETALERT2 MODAL ========== */
+.swal2-container {
+  z-index: 9999 !important;
 }
-
-/* ========== BOTONES ========== */
-#nuevoContactoBtn, #verContactosBtn {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: #bfe9db;
-  color: black;
-  border: #447c67;
-  border-radius: 10px;
-  cursor: pointer;
+.swal2-popup {
+  border-radius: 20px !important;
+  padding: 1.8em !important;
+  font-family: 'Arial', sans-serif !important;
+  background-color: #fefefe !important;
+  border: 2px solid #bfe9db !important;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) !important;
 }
-
-#nuevoContactoBtn:hover,
-#verContactosBtn:hover {
-  background-color: #74b89f;
-  color: white;
+.swal2-confirm {
+  background-color: #447c67 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  font-weight: bold !important;
 }
-
-/* ========== INPUT DE FILTRO ========== */
-#filtroInput {
-  display: block;
-  margin: 10px auto 20px;
-  padding: 10px;
-  width: 60%;
-  max-width: 400px;
-  border: 1px solid #ccc;
+.swal2-cancel {
+  background-color: #eeeeee !important;
+  color: #333 !important;
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+}
+.swal2-input {
+  background-color: #fff;
+  font-size: 0.8em;
+  padding: 7px 10px;
   border-radius: 5px;
+  width: 62%;
+  margin: 17px auto;
+  border: 2px solid #447c67;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-/* ========== TABLA DE CONTACTOS ========== */
-table {
-  width: 70%;
-  margin: 0 auto;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 8px;
-  text-align: left;
-  border: 2px solid #ddd;
-}
-
-th {
-  background-color: #bfe9db;
-}
-
-tr:hover {
-  background-color: #f5f5f5;
-}
-
-/* ========== ACCIONES EN FILA DE CONTACTO ========== */
+/* ========== FILA DE CONTACTO: MOSTRAR ACCIONES AL PASAR ========== */
 th.acciones-header {
   visibility: hidden;
   padding: 0;
   border: none;
   width: 1%;
 }
-
 .contact-row .acciones {
   visibility: hidden;
   display: flex;
@@ -76,172 +65,11 @@ th.acciones-header {
   width: 1%;
   white-space: nowrap;
 }
-
 .contact-row:hover .acciones {
   visibility: visible;
 }
 
-.contact-row .acciones button {
-  margin: 0;
-  padding: 8px 14px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 1.1em;
-  text-align: left;
-  border-radius: 10px;
-}
-
-.contact-row .acciones button:not(:last-child) {
-  margin-right: 0;
-}
-
-/* ========== BOTONES DE ACCIÓN EDITAR/ELIMINAR ========== */
-.btn-editar {
-  background-color: #dcefe8;
-  color: #555;
-  padding: 10px 20px;
-  font-size: 1.1em;
-}
-
-.btn-editar:hover {
-  background-color: #447c67;
-  color: white;
-}
-
-.btn-eliminar {
-  background-color: #ffe5e5;
-  color: #b50000;
-  padding: 10px 20px;
-  font-size: 1.1em;
-}
-
-.btn-eliminar:hover {
-  background-color: #ffb3b3;
-  color: white;
-}
-
-/* ========== MODAL ========== */
-.modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9999;
-}
-
-.modal.hidden {
-  display: none;
-}
-
-.modal-content {
-  background: #fff;
-  border-radius: 20px;
-  padding: 2rem;
-  width: 90%;
-  max-width: 650px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  position: relative;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.modal-content input,
-.modal-content select {
-  font-size: 1.1em;
-  padding: 12px;
-}
-
-/* ========== CIERRE MODAL ========== */
-.close {
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  font-size: 1.8rem;
-  cursor: pointer;
-  color: #aaa;
-  transition: color 0.2s;
-}
-
-.close:hover {
-  color: #333;
-}
-
-#guardarBtn {
-  background-color: #447c67;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 25px;
-  font-size: 1.1em;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-#guardarBtn:hover {
-  background-color: #74b89f;
-}
-
-/* ========== AVATAR Y PERFIL ========== */
-.avatar-section > div:first-child {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.avatar-section button {
-  margin: 0.3rem;
-  background-color: #fff;
-  color: #447c67;
-  border: 1px solid;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 0.8em;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.avatar-section button:hover {
-  background-color: #bfe9db;
-}
-
-.avatar-section > div:last-child {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.avatar-section h2 {
-  margin-bottom: 1rem;
-  font-size: 1.6em;
-  text-align: center;
-  color: #447c67;
-  width: 100%;
-}
-
-.avatar-section p {
-  font-size: 1.1em;
-  margin-bottom: 0.5rem;
-  color: #447c67;
-}
-
-.avatar-section p strong {
-  color: #447c67;
-}
-
-.avatar {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 0.5rem;
-}
-
+/* ========== AVATAR DEL PERFIL (opcional si no usas Tailwind aquí) ========== */
 #avatar-img {
   width: 180px;
   height: 180px;
@@ -252,12 +80,11 @@ th.acciones-header {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease-in-out;
 }
-
 #avatar-img:hover {
-  transform: scale(1.15);
+  transform: scale(1.08);
 }
 
-/* ========== INPUT DE ARCHIVO ========== */
+/* ========== INPUT DE ARCHIVO (si no lo migras aún a Tailwind) ========== */
 input[type="file"] {
   background-color: #fff;
   font-size: 0.5em;
@@ -266,103 +93,4 @@ input[type="file"] {
   color: #333;
   cursor: pointer;
   transition: background-color 0.2s ease;
-}
-
-/* ========== SWEETALERT2 ========== */
-.swal2-container {
-  z-index: 9999 !important;
-}
-
-.swal2-popup {
-  border-radius: 20px !important;
-  padding: 1.8em !important;
-  font-family: 'Arial', sans-serif !important;
-  background-color: #fefefe !important;
-  border: 2px solid #bfe9db !important;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) !important;
-}
-
-.swal2-confirm {
-  background-color: #447c67 !important;
-  color: white !important;
-  border-radius: 8px !important;
-  padding: 8px 20px !important;
-  font-weight: bold !important;
-}
-
-.swal2-cancel {
-  background-color: #eeeeee !important;
-  color: #333 !important;
-  border-radius: 8px !important;
-  padding: 8px 20px !important;
-}
-
-.swal2-input {
-  background-color: #fff;
-  font-size: 0.8em;
-  padding: 7px 10px;
-  border-radius: 5px;
-  width: 62%;
-  margin: 17px auto;
-  border: 2px solid #447c67;
-  color: #black;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.swal-nombre {
-  color: #447c67;
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-.swal-info {
-  color: black;
-  font-size: 1em;
-}
-
-/* ========== DESPLEGABLE PERSONAL/EMPRESA DENTRO DE EDITAR ========== */
-.swal2-input[type="select"],
-#swal-tipo {
-  background-color: #fff;
-  font-size: 0.8em;
-  padding: 7px 10px;
-  border-radius: 14px;
-  width: 62%;
-  margin: 17px auto;
-  border: 2px solid #447c67;
-  color: #333;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-/* ========== PAGINACIÓN ========== */
-.pagination-container {
-  /* opcional: centrar en su contenedor padre */
-  width: 100%;
-}
-
-.pagination {
-  display: flex;
-  justify-content: flex-start;
-  gap: 6px;
-  margin: 20px 0 20px 210px; /* mismo spacing que antes */
-}
-
- 
-/* ========== RESPONSIVE (MEDIA) ========== */
-@media (max-width: 600px) {
-  .avatar-section {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .avatar-section > div:last-child {
-    align-items: center;
-  }
-
-  .avatar-section h2 {
-    text-align: center;
-  }
 }

@@ -247,6 +247,7 @@ document.getElementById('exportExcelBtn').addEventListener('click', function() {
       });
   });
   
+    
 // ───────────────────────────────────────────────────────────── 
 // MANEJO DE EVENTOS
 // ───────────────────────────────────────────────────────────── 
@@ -298,6 +299,22 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
+ // Toggle modo oscuro
+ const toggleButton = document.getElementById('themeToggle');
+ const htmlElement = document.documentElement; // <html>
+ 
+ if (localStorage.getItem('theme') === 'dark') {
+   htmlElement.classList.add('dark');
+   toggleButton.textContent = 'Modo Claro ☀️';
+ }
+ 
+ toggleButton.addEventListener('click', () => {
+   htmlElement.classList.toggle('dark');
+   const isDarkMode = htmlElement.classList.contains('dark');
+   toggleButton.textContent = isDarkMode ? 'Modo Claro ☀️' : 'Modo Oscuro 🌙';
+   localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+ });
+ 
 // ───────────────────────────────────────────────────────────── 
 // FUNCIONES DE ACCIONES
 // ───────────────────────────────────────────────────────────── 
@@ -337,7 +354,7 @@ async function editarContacto(editarBtn) {
     const { value: formValues } = await Swal.fire({
         title: 'Editar contacto',
         html: `
-            <input id="swal-nombre" class="swal2-input" placeholder="Nombre" value="${nombre}">
+            <input id="swal-nombre" class="swal2-input" text-sm placeholder="Nombre" value="${nombre}">
             <input id="swal-apellidos" class="swal2-input" placeholder="Apellidos" value="${apellidos}">
             <input id="swal-telefono" class="swal2-input" placeholder="Teléfono" value="${telefono}">
             <input id="swal-direccion" class="swal2-input" placeholder="Dirección" value="${direccion}">
@@ -350,6 +367,20 @@ async function editarContacto(editarBtn) {
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         cancelButtonText: 'Cancelar',
+
+        didOpen: () => {
+            // Estilizar el botón "Guardar"
+            const confirmButton = document.querySelector('.swal2-confirm');
+            if (confirmButton) {
+                confirmButton.classList.add('text-sm', 'px-4', 'py-1.5');
+            }
+            // Estilizar botón "Cancelar"
+            const cancelButton = document.querySelector('.swal2-cancel');
+            if (cancelButton) {
+                cancelButton.classList.add('text-sm', 'font-bold', 'px-4', 'py-1.5');
+            }
+        }
+        ,
         preConfirm: () => ({
             nombre: document.getElementById('swal-nombre').value,
             apellidos: document.getElementById('swal-apellidos').value,
@@ -386,21 +417,37 @@ function añadirNuevoContacto() {
     Swal.fire({
         title: 'Añadir nuevo contacto',
         html: `
-            <input type="text" id="nombre" class="swal2-input" placeholder="Nombre">
-            <input type="text" id="apellidos" class="swal2-input" placeholder="Apellidos">
-            <input type="text" id="direccion" class="swal2-input" placeholder="Dirección">
-            <input type="text" id="telefono" class="swal2-input" placeholder="Teléfono">
-            <select id="tipo" class="swal2-input">
+            <div class="flex flex-col items-center text-sm gap-1">
+                <input type="text" id="nombre" class="swal2-input !w-80 !rounded-lg !px-2 !py-1" placeholder="Nombre">
+                <input type="text" id="apellidos" class="swal2-input !w-80 !rounded-lg !px-2 !py-1" placeholder="Apellidos">
+                <input type="text" id="direccion" class="swal2-input !w-80 !rounded-lg !px-2 !py-1" placeholder="Dirección">
+                <input type="text" id="telefono" class="swal2-input !w-80 !rounded-lg !px-2 !py-1" placeholder="Teléfono">
+
+                <select id="tipo" class="swal2-input !w-80 !rounded-lg !px-2 !py-1">
                 <option value="1">Personal</option>
                 <option value="2">Empresa</option>
-            </select>
-            <input type="file" id="imagen" class="swal2-file" accept="image/*">
-            <img id="previewImagen" src="" alt="Vista previa" style="margin-top:10px; max-width:100%; max-height:150px; display:none;">
-        `,
+                </select>
+
+                <input type="file" id="imagen" class="swal2-file text-xs !w-80" accept="image/*">
+                <img id="previewImagen" src="" alt="Vista previa"
+                class="mt-2 max-w-full max-h-40 rounded-lg shadow hidden"/>
+            </div>
+            `,
+
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         didOpen: () => {
-            const inputImagen = document.getElementById('imagen');
+                // Estilizar el botón "Guardar"
+            const confirmButton = document.querySelector('.swal2-confirm');
+            if (confirmButton) {
+                confirmButton.classList.add('text-sm', 'px-4', 'py-1.5');
+            }
+                // Estilizar botón "Cancelar"
+            const cancelButton = document.querySelector('.swal2-cancel');
+            if (cancelButton) {
+                cancelButton.classList.add('text-sm', 'font-bold', 'px-4', 'py-1.5');
+            }
+                const inputImagen = document.getElementById('imagen');
             const preview = document.getElementById('previewImagen');
 
             inputImagen.addEventListener('change', () => {

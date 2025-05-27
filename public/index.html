@@ -1,92 +1,148 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Agenda Virtual</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Tailwind CSS-->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#447c67',
+            soft: '#bfe9db'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
-<body>
-  <h1>Agenda Virtual</h1>
-  <p>¿Con quién nos ponemos en contacto?</p>
+<body class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white min-h-screen transition-colors duration-300">
 
-<!-- Contenedor de los botones Añadir Contacto y el Filtro -->
-  <div style="display: flex; justify-content: flex-start; align-items: center; gap: 327px; margin-bottom: 10px; margin-left: 210px">
-    <button id="nuevoContactoBtn" style="margin: 0px; align-self: flex-start;">Añadir Contacto</button>
-    <input type="text" id="filtroInput" placeholder="🔍 Filtrar por nombre, apellidos o teléfono" style="margin: 0;">
+  <header class="text-center py-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <h1 class="text-4xl font-bold text-primary dark:text-soft mb-2">Agenda Virtual</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-300">¿Con quién nos ponemos en contacto?</p>
+  </header>
+
+  <!-- Botón cambiar tema claro/oscuro -->
+  <button id="themeToggle"
+    class="fixed top-4 right-4 z-50 px-4 py-2 bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm rounded-full shadow-lg text-xs text-gray-700 dark:text-white hover:scale-105 transition-all duration-200 border border-gray-200 dark:border-gray-600">
+    <span class="flex items-center gap-2">
+      <span>Modo Oscuro</span>
+      <span>🌙</span>
+    </span>
+  </button>
+
+  <!-- Contenedor principal -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+
+  <!-- Contenedor de añadir y filtro -->
+  <div class="w-[80%] max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 mb-4">
+    <button id="nuevoContactoBtn"
+      class="px-4 py-1 bg-soft text-xs rounded-lg hover:bg-primary hover:text-white transition-all duration-200 shadow-md hover:shadow-sm font-medium flex items-center gap-2">
+        <span class="text-sm">➕</span>
+        <span>Añadir</span>
+    </button>
+    <input type="text" id="filtroInput"
+      class="w-full sm:w-72 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-300"
+      placeholder="🔍 Buscar contacto..." />
   </div>
-  
 
-  <div id="loadingSpinner" style="display:none; text-align: center;">Cargando...</div>
-  
-  <!-- Modal -->
-  <div id="contactDetailsModal" class="modal hidden">
-    <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <div class="avatar-section" style="display: flex; gap: 2rem; align-items: flex-start;">
-        <div style="display: flex; flex-direction: column; align-items: center;">
+  <div id="loadingSpinner" style="display:none;" class="text-center py-8">
+    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    <p class="mt-2 text-gray-600 dark:text-gray-400">Cargando...</p>
+  </div>
+
+  <!-- MODAL DETALLES -->
+  <div id="contactDetailsModal"
+    class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-center items-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-2xl relative text-gray-900 dark:text-white">
+
+      <!-- Botón cerrar -->
+      <button id="closeModal"
+        class="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-2xl font-bold">
+        &times;
+      </button>
+
+      <!-- Contenido -->
+      <div class="flex flex-col sm:flex-row gap-6 items-center">
+        <!-- Avatar -->
+        <div class="flex flex-col items-center">
           <img id="avatar-img"
             src="uploads/default-avatar.png"
-            onerror="this.onerror=null; this.src='uploads/default-avatar.png';"
             alt="Avatar"
-            style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;" />
-          <input type="file" id="uploadAvatar" accept="image/*" style="display: none;" />
-          <div style="margin-top: 1rem;">
-            <button id="editImageBtn">Cambiar</button>
-            <button id="deleteImageBtn">Eliminar</button>
+            class="w-28 h-28 rounded-full object-cover border-2 border-primary shadow-md">
+          <input type="file" id="uploadAvatar" accept="image/*" class="hidden" />
+          <div class="mt-3 flex gap-2">
+            <button id="editImageBtn"
+              class="px-3 py-1 bg-primary text-white text-xs rounded hover:bg-soft hover:text-xs transition">Cambiar</button>
+            <button id="deleteImageBtn"
+              class="px-3 py-1 bg-red-200 text-red-800 text-xs rounded hover:bg-red-400 transition">Eliminar</button>
           </div>
         </div>
-        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-          <h2 id="contactName" style="margin-bottom: 20px; text-align: center;"></h2>
-          <div>
-            <p><strong>Dirección:</strong> <span id="contactAddress"></span></p>
-            <p><strong>Teléfono:</strong> <span id="contactPhone"></span></p>
-            <p><strong>Tipo:</strong> <span id="contactType"></span></p>
-          </div>
+
+        <!-- Info -->
+        <div class="flex-1 text-center sm:text-center space-y-1 text-sm">
+          <h2 id="contactName" class="text-xl font-semibold"></h2>
+          <p><strong>Dirección:</strong> <span id="contactAddress"></span></p>
+          <p><strong>Teléfono:</strong> <span id="contactPhone"></span></p>
+          <p><strong>Tipo:</strong> <span id="contactType"></span></p>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="tabla-container" style="min-height: 300px;">   <!-- min-heigh para altura fija -->
-    <table id="contactos">
+  <!-- Tabla -->
+  <div id="tabla-container"
+    class="w-[80%] max-w-5xl mx-auto overflow-x-auto bg-transparent min-h-[250px]">
+    <table id="contactos"
+      class="min-w-full border-separate border-spacing-y-2 text-sm text-left text-gray-800 dark:text-gray-100">
       <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Apellidos</th>
-          <th>Teléfono</th>
-          <th>Tipo</th>
-          <th class="acciones-header">Acciones</th>
+        <tr class="bg-[#bfe9db] dark:bg-[#335b4e] rounded-lg">
+          <th class="px-4 py-2 font-semibold rounded-l-lg">Nombre</th>
+          <th class="px-4 py-2 font-semibold">Apellidos</th>
+          <th class="px-4 py-2 font-semibold">Teléfono</th>
+          <th class="px-4 py-2 font-semibold rounded-r-lg">Tipo</th>
+          <th class="acciones-header px-3 py-2 text-center">Acciones</th>
         </tr>
       </thead>
-      <tbody>
-        <tr class="contact-row">
-          <td>Juan</td>
-          <td>Pérez</td>
-          <td>600123456</td>
-          <td>Personal</td>
-          <td class="acciones">
-            <button class="btn-editar" title="Editar contacto">❌</button>
-            <button class="btn-eliminar" title="Eliminar contacto">✏️</button>
+      <tbody id="contactos-body">
+        <tr class="contact-row pl-6 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition rounded-lg shadow-sm">
+          <td class="pl-6 py-3 rounded-l-lg">Juan</td>
+          <td class="pl-6 py-3">Pérez</td>
+          <td class="pl-6 py-3">600123456</td>
+          <td class="pl-6 py-3 rounded-r-lg">Personal</td>
+          <td class="acciones pl-6 py-3 flex space-x-2 items-center justify-center">
+            <button class="btn-editar px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-300 transition" title="Editar contacto">✏️</button>
+            <button class="btn-eliminar px-3 py-1 bg-red-100 text-red-800 text-xs rounded hover:bg-red-300 transition" title="Eliminar contacto">❌</button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Paginación colocada fuera del contenedor de la tabla -->
-  <div id="paginacion" style="display: flex; justify-content: flex-start; gap: 6px; margin-top: 20px; margin-bottom: 20px; margin-left: 210px;">
-    <button class="btn-pagina">1</button>
-    <button class="btn-pagina">2</button>
-    <button class="btn-pagina">3</button>
-    <button class="btn-pagina">4</button>
-    <button class="btn-pagina">5</button>
-  </div>
-  <div style="display: flex; justify-content: flex-end; margin: 10px 325px 10px 0;">
-    <button id="exportExcelBtn">Exportar contactos</button>
+  <!-- Paginación -->
+  <div id="paginacion"
+    class="flex justify-center gap-2 mt-3 flex-wrap max-w-4xl mx-auto text-xs text-primary dark:text-soft">
   </div>
 
-  <script src="script.js"></script>
+  <!-- Exportar -->
+<div class="w-[70%] max-w-5xl mx-auto flex justify-end mt-2">
+  <button id="exportExcelBtn"
+    class="px-4 py-1 bg-primary text-xs text-white rounded hover:bg-soft hover:text-black transition">
+    📤 Exportar
+  </button>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
