@@ -46,15 +46,19 @@
   <div class="max-w-6xl mx-auto px-4 py-8">
 
   <!-- Contenedor de añadir y filtro -->
-  <div class="w-[80%] max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 mb-4">
-    <button id="nuevoContactoBtn"
-      class="px-4 py-1 bg-soft text-xs rounded-lg hover:bg-primary hover:text-white transition-all duration-200 shadow-md hover:shadow-sm font-medium flex items-center gap-2">
-        <span class="text-sm">➕</span>
-        <span>Añadir</span>
-    </button>
-    <input type="text" id="filtroInput"
-      class="w-full sm:w-72 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-300"
-      placeholder="🔍 Buscar contacto..." />
+  <div class="w-[80%] max-w-5xl mx-auto mb-4">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
+      <button id="nuevoContactoBtn"
+        class="px-6 py-1 bg-soft text-xs rounded-lg hover:bg-primary hover:text-white transition-all duration-200 shadow-md hover:shadow-sm font-medium flex items-center gap-2 dark:text-gray-600 dark:bg-primary dark:text-white dark:hover:bg-soft dark:hover:text-gray-900">
+          <span class="text-sm">➕</span>
+          <span>Añadir</span>
+      </button>
+      <div class="w-full sm:w-auto flex justify-end sm:pr-20">
+        <input type="text" id="filtroInput"
+          class="w-full sm:w-72 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent shadow-sm transition-all duration-200 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-300"
+          placeholder="🔍 Buscar contacto..." />
+      </div>
+    </div>
   </div>
 
   <div id="loadingSpinner" style="display:none;" class="text-center py-8">
@@ -112,21 +116,16 @@
           <th class="px-4 py-2 font-semibold">Apellidos</th>
           <th class="px-4 py-2 font-semibold">Teléfono</th>
           <th class="px-4 py-2 font-semibold rounded-r-lg">Tipo</th>
-          <th class="acciones-header px-3 py-2 text-center">Acciones</th>
         </tr>
-      </thead>
+      </thead>      
       <tbody id="contactos-body">
-        <tr class="contact-row pl-6 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition rounded-lg shadow-sm">
-          <td class="pl-6 py-3 rounded-l-lg">Juan</td>
+        <tr class="group bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition rounded-lg shadow-sm">
+          <td class="pl-6 py-3">Juan</td>
           <td class="pl-6 py-3">Pérez</td>
           <td class="pl-6 py-3">600123456</td>
-          <td class="pl-6 py-3 rounded-r-lg">Personal</td>
-          <td class="acciones pl-6 py-3 flex space-x-2 items-center justify-center">
-            <button class="btn-editar px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded hover:bg-blue-300 transition" title="Editar contacto">✏️</button>
-            <button class="btn-eliminar px-3 py-1 bg-red-100 text-red-800 text-xs rounded hover:bg-red-300 transition" title="Eliminar contacto">❌</button>
-          </td>
+          <td class="pl-6 py-3">Personal</td>
         </tr>
-      </tbody>
+      </tbody>      
     </table>
   </div>
 
